@@ -49,6 +49,11 @@ func MakeDiskImage(dest string, size uint, r io.Reader) error {
 	return cmd.Wait()
 }
 
+// CloneDiskImage clones the provided disk image to the dest.
+func CloneDiskImage(dest, src string) error {
+	return vbm("clonehd", src, dest)
+}
+
 // ZeroFill writes n zero bytes into w.
 func ZeroFill(w io.Writer, n int64) error {
 	const blocksize = 32 << 10
