@@ -303,12 +303,6 @@ func CreateMachine(name, basefolder string) (*Machine, error) {
 // Modify changes the settings of the machine.
 func (m *Machine) Modify() error {
 	args := []string{"modifyvm", m.Name,
-		"--firmware", "bios",
-		"--bioslogofadein", "off",
-		"--bioslogofadeout", "off",
-		"--bioslogodisplaytime", "0",
-		"--biosbootmenu", "disabled",
-
 		"--ostype", m.OSType,
 		"--cpus", fmt.Sprintf("%d", m.CPUs),
 		"--memory", fmt.Sprintf("%d", m.Memory),
@@ -317,17 +311,12 @@ func (m *Machine) Modify() error {
 		"--acpi", m.Flag.Get(F_acpi),
 		"--ioapic", m.Flag.Get(F_ioapic),
 		"--rtcuseutc", m.Flag.Get(F_rtcuseutc),
-		"--cpuhotplug", m.Flag.Get(F_cpuhotplug),
 		"--pae", m.Flag.Get(F_pae),
-		"--longmode", m.Flag.Get(F_longmode),
 		"--synthcpu", m.Flag.Get(F_synthcpu),
 		"--hpet", m.Flag.Get(F_hpet),
 		"--hwvirtex", m.Flag.Get(F_hwvirtex),
-		"--triplefaultreset", m.Flag.Get(F_triplefaultreset),
 		"--nestedpaging", m.Flag.Get(F_nestedpaging),
 		"--largepages", m.Flag.Get(F_largepages),
-		"--vtxvpid", m.Flag.Get(F_vtxvpid),
-		"--vtxux", m.Flag.Get(F_vtxux),
 		"--accelerate3d", m.Flag.Get(F_accelerate3d),
 	}
 
@@ -341,6 +330,21 @@ func (m *Machine) Modify() error {
 		return err
 	}
 	return m.Refresh()
+}
+
+// ModifySetting changes the settings of the machine.
+func (m *Machine) ModifySetting(setting string, isOn bool) error {
+	isOnString := "off"
+	if isOn {
+		isOnString = "on"
+	}
+	args := []string{"modifyvm", m.Name,
+		setting, isOnString,
+	}
+	if err := vbm(args...); err != nil {
+		return err
+	}
+	return nil
 }
 
 // AddNATPF adds a NAT port forarding rule to the n-th NIC with the given name.
