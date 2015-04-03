@@ -332,19 +332,15 @@ func (m *Machine) Modify() error {
 	return m.Refresh()
 }
 
-// ModifySetting changes the settings of the machine.
-func (m *Machine) ModifySetting(setting string, isOn bool) error {
-	isOnString := "off"
-	if isOn {
-		isOnString = "on"
-	}
-	args := []string{"modifyvm", m.Name,
-		setting, isOnString,
-	}
+// ModifyVM changes the settings of the machine.
+func (m *Machine) ModifyVM(settings []string) error {
+	args := []string{"modifyvm", m.Name}
+	args = append(args, settings...)
 	if err := vbm(args...); err != nil {
 		return err
 	}
-	return nil
+
+	return m.Refresh()
 }
 
 // AddNATPF adds a NAT port forarding rule to the n-th NIC with the given name.
